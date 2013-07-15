@@ -1,0 +1,135 @@
+1) Install stable version from apache repo or locally
+ dpkg -r sane-utils # saned group conflicts with hadoop group
+ dpkg --purge sane-utils
+ dpkg -i some_path/hadoop_1.1.2-1_x86_64.deb
+ # Edit /etc/hadoop/hadoop-env.sh
+ # < export HADOOP_CLIENT_OPTS="-Xmx128m $HADOOP_CLIENT_OPTS"
+ # ---
+ # > export HADOOP_CLIENT_OPTS="-Xmx4096m $HADOOP_CLIENT_OPTS"
+
+2) Pseudo Distributed Setup on localhost
+ # Add to $HOME/bash_aliases
+ cat <<EOF_ALIAS >> $HOME/bash_aliases
+ resethdpenv () {
+  unset \`env | grep HADOOP|cut -f1 -d=|sort -u\` # Remove all env var
+ }
+EOF_ALIAS
+ . .bash_aliases
+ resethdpenv # Clean up any HADOOP env inherited
+ #
+ # Setup passwordless ssh
+ #
+ ssh localhost pwd   # Note: should ask for password
+ ssh-keygen -t dsa -P '' -f $HOME/.ssh/id_dsa 
+ cat $HOME/.ssh/id_dsa.pub >> $HOME/.ssh/authorized_keys
+ ssh localhost pwd   # Note: don't ask for password
+ # Create conf
+ mkdir -p $HOME/hadoopsingle/confsingle $HOME/hadoopsingle/run $HOME/hadoopsingle/log $HOME/hadoopsingle/hdfs
+ cp /etc/haddop/hadoop-env.sh  $HOME/confsingle/hadoop-env.sh
+ # Edit confsingle/hadoop-env.sh to remove reference to / ( LOG and 1
+ cat << EOF_SITE > $HOME/hadoopsingle/confsingle/core-site.xml
+<configuration>
+     <property>
+         <name>fs.default.name</name>
+         <value>hdfs://localhost:9000</value>
+     </property>
+</configuration>
+EOF_SITE
+  cat << EOF_HDFS > $HOME/hadoopsingle/confsingle/hdfs-site.xml
+<configuration>
+     <property>
+         <name>dfs.replication</name>
+         <value>1</value>
+     </property>
+     <property>
+        <name>dfs.name.dir</name>
+        <value>${HOME}/hadoopsingle/hdfs/nm</value>
+     </property>
+     <property>
+        <name>dfs.data.dir</name>
+        <value>${HOME}/hadoopsingle/hdfs/data</value> 
+     </property>
+</configuration>
+EOF_HDFS
+  cat << EOF_MAPRED > $HOME/hadoopsingle/confsingle/mapred-site.xml
+<configuration>
+     <property>
+         <name>mapred.job.tracker</name>
+         <value>localhost:9001</value>
+     </property>
+     <property>
+        <name>mapred.system.dir</name>
+        <value>${HOME}/hadoopsingle/hdfs/system</value>
+     </property>
+     <property>
+        <name>mapred.local.dir</name>
+        <value>${HOME}/hadoopsingle/hdfs/tmp</value>
+     </property>
+     <property>
+        <name>mapred.tasktracker.map.tasks.maximum</name>
+        <value>2</value>
+     </property>
+     <property>
+        <name>mapred.tasktracker.reduce.tasks.maximum</name>
+        <value>2</value>
+     </property>
+     <property>
+        <name>mapred.child.java.opts</name>
+        <value>-Xmx4096m</value>
+     </property>
+</configuration>
+EOF_MAPRED
+echo "localhost" > $HOME/hadoopsingle/confsingle/masters
+echo "localhost" > $HOME/hadoopsingle/confsingle/slaves
+
+3) Run Test Program
+ # Unset all HADOOP env vars
+ resethdpenv # Clean up any HADOOP env inherited
+ # Point to user based conf dir
+ export HADOOP_CONF_DIR=$HOME/hadoopsingle/confsingle # AFTER resethdpenv
+ #
+ # if not already here
+ #
+ mkdir -p $HOME/hadoopsingle/inputdir
+ cp /usr/share/hadoop/templates/conf/*.xml inputdir/
+ cp /usr/share/hadoop/hadoop-examples-*.jar .
+ # Create namenode
+  hadoop namenode -format
+  # Run daemon on master host (hadoop-daemon) and on all slaves via ssh (hadoop-daemons)
+  /usr/sbin/start-all.sh   # Run daemon on master host and on all slaves via ssh
+  jps # show the running java processes
+ #
+    Browse NameNode   - http://localhost:50070/ ( or host ip, it listen on * )
+    Browse JobTracker - http://localhost:50030/ ( or host ip, it listen on * )
+    Browse TaskTracker - http://localhost:50060/ ( or host ip, it listen on * )
+
+  # Copy the input files into the distributed filesystem:
+	hadoop fs -put inputdir inputhdfs
+	hadoop fs -ls 
+	hadoop fs -ls inputhdfs
+
+  # Run some of the examples provided:
+        hadoop jar hadoop-examples-*.jar grep inputhdfs outputgrephdfs 'dfs[a-z.]+'
+        hadoop jar hadoop-examples-*.jar wordcount inputhdfs outputcounthdfs 'dfs[a-z.]+'
+	hadoop fs -ls 
+	hadoop fs -ls outputcounthdfs  outputgrephdfs
+
+  # View the output files on the distributed filesystem:
+	hadoop fs -cat outputgrephdfs/* | less
+	hadoop fs -cat outputcounthdfs/* | less
+
+  # Copy the output files from the distributed filesystem to the 
+  # local filesytem and examine them:
+	hadoop fs -get outputhdfs outputgrep
+	hadoop fs -get outputhdfs outputcount
+	less outputgrep/*
+
+  # When you're done, stop the daemons with:
+	/usr/sbin/stop-all.sh 
+  	jps # show the running java processes, only jps shows up 
+
+  # Dir cleanup
+        /usr/bin/rm -rf ./log/* ./run/* ./outputgrep/ ./outputcount/ ./inputdir/
+
+  # Remove the hdfs system
+	 /bin/rm -rf $HOME/hadoopsingle/hdfs/*

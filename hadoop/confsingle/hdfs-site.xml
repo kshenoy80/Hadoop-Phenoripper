@@ -1,0 +1,14 @@
+<configuration>
+     <property>
+         <name>dfs.replication</name>
+         <value>1</value>
+     </property>
+     <property>
+        <name>dfs.name.dir</name>
+        <value>/home/user/hadoop/hdfs/nm</value>
+     </property>
+     <property>
+        <name>dfs.data.dir</name>
+        <value>/home/user/hadoop/hdfs/data</value>
+     </property>
+</configuration>

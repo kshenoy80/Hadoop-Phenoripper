@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+ * BlockRegistration.xml 
+ * Abstract: 
+ *  Register blocks in dsp_blocks_2 module  
+ *  To be shipped with Simulink
+ *
+ * Copyright 2007-2012 The MathWorks, Inc.
+ -->
+<Modules>
+
+<ModuleRegistry modname="dsp_blocks_2"
+                modulePath="$MATLABROOT/bin/$ARCH"
+                registryVersion="1.0"
+                >
+<BlockRegistration block_type_str = "DiscreteFir" />
+<BlockRegistration block_type_str = "DiscreteFilter"/>
+<BlockRegistration block_type_str = "DiscreteTransferFcn"/>
+<BlockRegistration block_type_str = "TimeScope"/>
+<BlockRegistration block_type_str = "SpectrumAnalyzer"/>
+<BlockRegistration block_type_str = "AllpoleFilter"/>
+
+</ModuleRegistry>
+
+<ModuleRegistry modname="matlabsystemblock"
+                modulePath="$MATLABROOT/bin/$ARCH"
+                registryVersion="1.0"
+                >
+<BlockRegistration block_type_str = "MATLABSystem" />
+
+</ModuleRegistry>
+
+</Modules>

@@ -1,0 +1,19 @@
+#!/bin/sh
+PATH=/bin:/usr/bin:/usr/sbin:/sbin
+WHO=`basename $0`
+DEFCONFFILE=/etc/hadoop/hadoop-env.sh
+CONFFILE=`readlink -f $DEFCONFFILE`
+if [ ! -r $CONFFILE ]
+then
+ echo "$WHO: cant' read conf file $CONFFILE"
+ exit 1
+fi
+if [ ! -r ${CONFFILE}.saved ]
+then
+ cp ${CONFFILE} CONFFILE}${CONFFILE}.saved
+fi
+grep -q x128m $CONFFILE
+if [ "$?" = "1" ]
+then
+ sed -i -e 's%x128m%x4096m%' $CONFFILE
+fi

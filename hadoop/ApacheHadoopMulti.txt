@@ -1,0 +1,92 @@
+1) Install stable version from apache repo or locally
+ dpkg -r sane-utils # saned group conflicts with hadoop group
+ dpkg --purge sane-utils
+ dpkg -i some_path/hadoop_1.1.2-1_x86_64.deb
+ # Edit /etc/hadoop/hadoop-env.sh
+ # < export HADOOP_CLIENT_OPTS="-Xmx128m $HADOOP_CLIENT_OPTS"
+ # ---
+ # > export HADOOP_CLIENT_OPTS="-Xmx4096m $HADOOP_CLIENT_OPTS"
+
+2) Setup multi host as standard users
+ # Edit BuildMultiSetup  and change
+ #  SLAVE_LISTS to host slave list
+ # on each host slave list the current master user must exist
+ # with the same username
+ #
+ ./BuildMultiSetup  [conf_dir]
+ . $HOME/.bash_aliases
+
+3) Run Test Program
+ # Unset all HADOOP env vars
+ resethdpenv # Clean up any HADOOP env inherited
+ # Point to user based conf dir  AFTER resethdpconf
+ sethdpconf conf_dir $HOME/hadoopmulti/confmulti
+ #
+ # if not already here
+ #
+ mkdir -p $HOME/hadoopmulti/inputdir
+ cp /usr/share/hadoopmulti/templates/conf/*.xml inputdir/
+ cp /usr/share/hadoopmulti/hadoop-examples-*.jar .
+ # Create namenode
+  hadoop namenode -format
+  # Run daemon on master host (hadoop-daemon) and on all slaves via ssh (hadoop-daemons)
+  /usr/sbin/start-all.sh   # Run daemon on master host and on all slaves via ssh
+  jps # show the running java processes
+ #
+    Browse NameNode   - http://master:50070/ ( or host ip, it listen on * )
+    Browse JobTracker - http://master:50030/ ( or host ip, it listen on * )
+    Browse TaskTracker - http://master:50060/ ( or host ip, it listen on * )
+    Browse TaskTracker - http://pc11:50060/ ( or host ip, it listen on * )
+
+  # Copy the input files into the distributed filesystem:
+	hadoop fs -put inputdir inputhdfs
+	hadoop fs -ls 
+	hadoop fs -ls inputhdfs
+
+  # Run some of the examples provided:
+        hadoop jar hadoop-examples-*.jar grep inputhdfs outputgrephdfs 'dfs[a-z.]+'
+        hadoop jar hadoop-examples-*.jar wordcount inputhdfs outputcounthdfs 'dfs[a-z.]+'
+	hadoop fs -ls 
+	hadoop fs -ls outputcounthdfs  outputgrephdfs
+
+  # View the output files on the distributed filesystem:
+	hadoop fs -cat outputgrephdfs/* | less
+	hadoop fs -cat outputcounthdfs/* | less
+
+  # Copy the output files from the distributed filesystem to the 
+  # local filesytem and examine them:
+	hadoop fs -get outputhdfs outputgrep
+	hadoop fs -get outputhdfs outputcount
+	less outputgrep/*
+
+  # When you're done, stop the daemons with:
+	/usr/sbin/stop-all.sh 
+  	jps # show the running java processes, only jps shows up 
+
+  # Dir cleanup
+        /usr/bin/rm -rf ./log/* ./run/* ./outputgrep/ ./outputcount/ ./inputdir/
+
+  # Remove the hdfs system
+	 /bin/rm -rf $HOME/hadoopmulti/hdfs/*
+	# for each HOST on slave list:
+	# ssh user@HOST /bin/rm -rf $HOME/hadoopmulti/hdfs/*
+	 ssh user@pc11 /bin/rm -rf $HOME/hadoopmulti/hdfs/*
+
+NOTES:
+ A Hadoop-multi-host is defined by  master and slaves run from a user.
+ The same PC CAN'T BE USED AT THE SAME TIME from different Hadoop-multi-host.
+
+ To add an user on another machine just run:
+
+  sudo adduser username
+
+ The username MUST HAVE the same name on master and slaves composing
+ a Hadoop-multi-host.
+
+ Remember to change dfs.replication on conf_dir/hdfs-site.xml if
+ more than 2 hosts are used. Default is 3.
+
+ Simple changing conf_dir can create different configuration
+ but remember hdfs is defined inside configuration
+
+ start-all.sh and stop-all.sh ca

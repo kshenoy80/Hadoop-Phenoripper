@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings name="matlab" xmlns="urn:mathworks.matlab.settings" xsi:schemaLocation="urn:mathworks.matlab.settings settings.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <key name="DeleteFilesPermanently">
+        <bool>
+            <value>1</value>
+        </bool>
+    </key>
+    <settings name="apps" visible="true">
+        <key name="AppsInstallFolder" visible="true">
+            <string>
+                <value><![CDATA[/home/srajaram/Documents/Apps]]></value>
+            </string>
+        </key>
+    </settings>
+    <settings name="class">
+    </settings>
+    <settings name="desktop">
+        <settings name="commandwindow">
+        </settings>
+        <settings name="currentfolder">
+            <key name="History">
+                <string minArraySize="0" maxArraySize="500">
+                    <value><![CDATA[/home/srajaram/Work/Misc/Joey/Code]]></value>
+                    <value><![CDATA[/home/lab_share/Project planning/2011_10_Woods_Hole_Class/DataSets/Slack_PNAS_2008/Segmentation]]></value>
+                    <value><![CDATA[/home/lab_share/Project planning/2011_10_Woods_Hole_Class/DataSets/Lung_Cancer_lines/EGFR_Akt]]></value>
+                    <value><![CDATA[/home/srajaram/Work/Misc/Shanshan/Code]]></value>
+                    <value><![CDATA[/home/srajaram/Work/Misc/Shanshan]]></value>
+                    <value><![CDATA[/home/srajaram/Work/Misc]]></value>
+                    <value><![CDATA[/home/srajaram/Work]]></value>
+                    <value><![CDATA[/home/srajaram]]></value>
+                    <value><![CDATA[/home]]></value>
+                    <value><![CDATA[/home/lab_share]]></value>
+                    <value><![CDATA[/home/lab_share/Temp]]></value>
+                    <value><![CDATA[/home/lab_share/Temp/ShanShan]]></value>
+                    <value><![CDATA[/home/lab_share/Temp/ShanShan/neutrophil live probes image quantification]]></value>
+                    <value><![CDATA[/home/lab_share/Temp/ShanShan/neutrophil live probes image quantification/Hem1]]></value>
+                    <value><![CDATA[/home/srajaram/Work/Heterogeneity/Code/v2]]></value>
+                    <value><![CDATA[/home/srajaram/Work/Heterogeneity/Results]]></value>
+                    <value><![CDATA[/home/srajaram/Work/Heterogeneity]]></value>
+                    <value><![CDATA[/home/srajaram/Work/Heterogeneity/Code]]></value>
+                    <value><![CDATA[/home/z/Presentations/APS Meeting/Code]]></value>
+                    <value><![CDATA[/home/project/Common/toolbox_v3.0]]></value>
+                </string>
+            </key>
+            <key name="HistorySize">
+                <int32>
+                    <value>20</value>
+                </int32>
+            </key>
+            <key name="ShowHiddenFiles">
+                <bool>
+                    <value>0</value>
+                </bool>
+            </key>
+            <settings name="autorefresh">
+                <key name="Enabled">
+                    <bool>
+                        <value>1</value>
+                    </bool>
+                </key>
+                <key name="Interval">
+                    <int32>
+                        <value>3</value>
+                    </int32>
+                </key>
+            </settings>
+            <settings name="lastfolder">
+                <key name="ClosedGroups">
+                    <string minArraySize="0" maxArraySize="100000">
+                        <value><![CDATA[]]></value>
+                    </string>
+                </key>
+                <key name="ColumnOrder">
+                    <string minArraySize="0" maxArraySize="6">
+                        <value><![CDATA[icon]]></value>
+                        <value><![CDATA[name]]></value>
+                        <value><![CDATA[size]]></value>
+                        <value><![CDATA[modified]]></value>
+                        <value><![CDATA[__vertical_attribute:description]]></value>
+                        <value><![CDATA[type]]></value>
+                    </string>
+                </key>
+                <key name="ColumnSizes">
+                    <string minArraySize="0" maxArraySize="100000">
+                        <value><![CDATA[40]]></value>
+                        <value><![CDATA[227]]></value>
+                        <value><![CDATA[0]]></value>
+                        <value><![CDATA[0]]></value>
+                        <value><![CDATA[0]]></value>
+                        <value><![CDATA[226]]></value>
+                    </string>
+                </key>
+                <key name="GroupColumn">
+                    <string>
+                        <value><![CDATA[]]></value>
+                    </string>
+                </key>
+                <key name="GroupMode">
+                    <string>
+                        <value><![CDATA[]]></value>
+                    </string>
+                </key>
+                <key name="OpenGroups">
+                    <string minArraySize="0" maxArraySize="100000">
+                    </string>
+                </key>
+                <key name="SortColumn">
+                    <string>
+                        <value><![CDATA[name]]></value>
+                    </string>
+                </key>
+                <key name="SortDescending">
+                    <bool>
+                        <value>0</value>
+                    </bool>
+                </key>
+                <key name="VisibleColumns">
+                    <string minArraySize="0" maxArraySize="100">
+                        <value><![CDATA[icon]]></value>
+                        <value><![CDATA[name]]></value>
+                        <value><![CDATA[type]]></value>
+                    </string>
+                </key>
+            </settings>
+            <settings name="lastsearch">
+                <key name="ClosedGroups">
+                    <string minArraySize="0" maxArraySize="10000">
+                        <value><![CDATA[]]></value>
+                    </string>
+                </key>
+                <key name="ColumnOrder">
+                    <string minArraySize="0" maxArraySize="7">
+                        <value><![CDATA[icon]]></value>
+                        <value><![CDATA[name]]></value>
+                        <value><![CDATA[size]]></value>
+                        <value><![CDATA[modified]]></value>
+                        <value><![CDATA[__vertical_attribute:description]]></value>
+                        <value><![CDATA[location]]></value>
+                        <value><![CDATA[type]]></value>
+                    </string>
+                </key>
+                <key name="ColumnSizes">
+                    <string minArraySize="0" maxArraySize="100000">
+                        <value><![CDATA[40]]></value>
+                        <value><![CDATA[0]]></value>
+                        <value><![CDATA[0]]></value>
+                        <value><![CDATA[0]]></value>
+                        <value><![CDATA[0]]></value>
+                        <value><![CDATA[0]]></value>
+                        <value><![CDATA[0]]></value>
+                    </string>
+                </key>
+                <key name="GroupColumn">
+                    <string>
+                        <value><![CDATA[]]></value>
+                    </string>
+                </key>
+                <key name="GroupMode">
+                    <string>
+                        <value><![CDATA[]]></value>
+                    </string>
+                </key>
+                <key name="OpenGroups">
+                    <string minArraySize="0" maxArraySize="100000">
+                    </string>
+                </key>
+                <key name="SortColumn">
+                    <string>
+                        <value><![CDATA[modified]]></value>
+                    </string>
+                </key>
+                <key name="SortDescending">
+                    <bool>
+                        <value>1</value>
+                    </bool>
+                </key>
+                <key name="VisibleColumns">
+                    <string minArraySize="0" maxArraySize="100">
+                        <value><![CDATA[icon]]></value>
+                        <value><![CDATA[name]]></value>
+                        <value><![CDATA[modified]]></value>
+                        <value><![CDATA[description]]></value>
+                    </string>
+                </key>
+            </settings>
+            <settings name="pathaffordance">
+                <key name="Enabled">
+                    <bool>
+                        <value>1</value>
+                    </bool>
+                </key>
+                <key name="Transparency">
+                    <int32>
+                        <value>40</value>
+                    </int32>
+                </key>
+            </settings>
+        </settings>
+        <settings name="help" visible="true">
+        </settings>
+    </settings>
+</settings>

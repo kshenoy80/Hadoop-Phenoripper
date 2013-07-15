@@ -1,0 +1,34 @@
+1) Install stable version
+ dpkg -r sane-utils # saned group conflicts with hadoop group
+ dpkg --purge sane-utils
+ dpkg -i some_path/hadoop_1.1.2-1_x86_64.deb
+ # Edit /etc/hadoop/hadoop-env.sh
+ # export HADOOP_HEAPSIZE=4096
+ # < export HADOOP_CLIENT_OPTS="-Xmx128m $HADOOP_CLIENT_OPTS"
+ # ---
+ # > export HADOOP_CLIENT_OPTS="-Xmx4096m $HADOOP_CLIENT_OPTS"
+
+2) Setup Standalone Config
+ # Add to ~/.bash_aliases
+ resethdpenv () {
+  unset `env | grep HADOOP|cut -f1 -d=|sort -u` # Remove all env var
+ }
+ # Do . .bash_aliases
+ resethdpenv # Clean up any env HADOOP inherited
+ mkdir -p ~/hadoop/inputdir
+ cd  ~/hadoop/
+ cp /usr/share/hadoop/templates/conf/*.xml inputdir/ # Or other text files
+ cp /usr/share/hadoop/hadoop-examples-*.jar .  # Get examples jar
+
+3) Run Test program
+ hadoop jar hadoop-examples-*.jar grep inputdir outputgrep 'dfs[a-z.]+'
+ less outputgrep/*
+ hadoop jar hadoop-examples-*.jar wordcount inputdir outputcount
+ less outputcount/*
+ # Cleanup
+ /bin/rm -rf ./outputcount/ ./outputgrep/ ./inputdir/
+
+# NOTES:
+On Heap error, unset all HADOOP env var:
+   unset `env | grep HADOOP|cut -f1 -d=|sort -u`
+   or resethdpenv

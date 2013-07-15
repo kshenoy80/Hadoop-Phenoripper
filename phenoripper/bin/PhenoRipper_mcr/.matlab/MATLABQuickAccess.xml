@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<quick_access_configuration>
+   <tool display_condition="always" section_id="run" tab_id="editor" tool_id="run" toolset_id="editor_toolset"/>
+   <tool context_id="Editor" display_condition="always" section_id="run" tab_id="editor" tool_id="run_cell_and_advance" toolset_id="editor_toolset"/>
+   <tool context_id="Editor" display_condition="always" section_id="run" tab_id="editor" tool_id="run_cell" toolset_id="editor_toolset"/>
+   <tool display_condition="always" label_visible="true" section_id="general" tab_id="shortcuts" tool_id="UpdateFiles" toolset_id="matlab_shortcut_toolset"/>
+   <tool display_condition="always" section_id="breakpoints" tab_id="editor" tool_id="error_handling_options" toolset_id="editor_toolset">
+      <ancestor tool_id="error_handling_group" toolset_id="editor_toolset"/>
+      <ancestor tool_id="error_handling_options" toolset_id="editor_toolset"/>
+   </tool>
+   <tool display_condition="always" section_id="breakpoints" tab_id="editor" tool_id="clear_all_breakpoints" toolset_id="editor_toolset">
+      <ancestor tool_id="breakpoints_group" toolset_id="editor_toolset"/>
+   </tool>
+   <tool display_condition="always" section_id="debug" tab_id="editor" tool_id="exit_debug" toolset_id="editor_toolset"/>
+   <tool display_condition="always" section_id="debug" tab_id="editor" tool_id="step" toolset_id="editor_toolset"/>
+   <tool display_condition="always" section_id="debug" tab_id="editor" tool_id="continue" toolset_id="editor_toolset"/>
+</quick_access_configuration>

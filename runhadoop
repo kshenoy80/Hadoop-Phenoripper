@@ -1,0 +1,1 @@
+ hadoop jar /usr/share/hadoop/contrib/streaming/hadoop-streaming-1.1.2.jar -D mapred.reduce.tasks=0 -inputformat org.apache.hadoop.mapred.lib.NLineInputFormat -file phenomapper.py -mapper phenomapper.py -input ~/input.txt -output ~/out

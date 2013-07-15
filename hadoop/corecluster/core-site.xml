@@ -1,0 +1,6 @@
+<configuration>
+     <property>
+         <name>fs.default.name</name>
+         <value>hdfs://${HADOOP_NAMENODE_HOST}/</value>
+     </property>
+</configuration>

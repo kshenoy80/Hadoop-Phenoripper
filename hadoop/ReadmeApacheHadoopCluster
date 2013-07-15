@@ -1,0 +1,44 @@
+1) Install stable version
+ dpkg -r sane-utils # saned group conflicts with hadoop group
+ dpkg --purge sane-utils
+ dpkg -i some_path/hadoop_1.1.2-1_x86_64.deb
+
+2) Choose a  NameNode ( Master of data )
+	     JobTracker ( Master of job )
+	     SecondaryNameNode ( Hfds merge: http://hadoop.apache.org/docs/stable/hdfs_user_guide.html#Secondary+NameNode )
+   and two or more 
+	     DataNode ( Data Slave ) 
+	     TaskTracker ( Execute job )
+
+3) Put under /etc/hadoop/ the following files:
+	masters: SecondaryNameNode (IP or hostname as resolved)
+	slaves:	list of IP/hostname of slave machines
+
+4) On NameNode
+    update-rc.d enable hadoop-namenode
+    service hadoop-namenode start
+
+   On SecondaryNameNode
+    update-rc.d enable hadoop-secondaryname
+    service hadoop-secondaryname start
+
+   On NameNode
+    update-rc.d enable hadoop-namenode
+    service hadoop-namenode start
+
+
+   On JobTracker
+    update-rc.d enable hadoop-historyserver
+    service hadoop-historyserver start
+    update-rc.d enable hadoop-jobtracker
+    service hadoop-jobtracker start
+
+   On each DataNode and TaskTracker
+    update-rc.d enable hadoop-datanode
+    service hadoop-datanode start
+    update-rc.d enable hadoop-tasktracker
+    service hadoop-tasktracker start
+
+Open question:
+
+user has to be able to use passwordless ssh on master and all slaves

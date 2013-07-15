@@ -1,0 +1,181 @@
+#!/bin/sh
+PATH=/bin:/usr/bin:/usr/sbin:/sbin
+WHO=`basename $0`
+HDBASE=$HOME/hadoopmulti
+DEFCONFDIR=confmulti
+if [ "x$1" != "x" ]
+then
+ P1=`readlink -f $1`
+ if [ "x$P1" = "x" ]
+ then
+  P1=$PWD/$1
+ fi
+ CONFDIR=$P1
+ HDBASE=`dirname $CONFDIR`
+else
+ CONFDIR=$HDBASE/$DEFCONFDIR
+fi
+
+touch ~/.bash_aliases
+
+#
+# Change to your pc master
+#
+MASTER=pc05
+#
+# SLAVE_LISTS="host1 host2 host3 host4"
+# On each pc the same user must exist
+#
+#SLAVE_LISTS="pc08 pc02 pc18"
+SLAVE_LISTS=""
+#
+# Don't change anything below
+#
+grep -q resethdpenv $HOME/.bash_aliases
+if [ "$?" = "1" ]
+then
+ cat <<EOF_ALIAS >> $HOME/.bash_aliases
+ resethdpenv () {
+  unset \`env | grep HADOOP|cut -f1 -d=|sort -u\` # Remove all env var
+ }
+EOF_ALIAS
+fi
+grep -q showhdpenv $HOME/.bash_aliases
+if [ "$?" = "1" ]
+then
+ cat <<EOF_ALIAS >> $HOME/.bash_aliases
+ showhdpenv () {
+  env | grep HADOOP
+  if [ "\$HADOOP_CONF_DIR" != "" ]
+  then
+   echo "Current config dir is: \$HADOOP_CONF_DIR"
+  fi
+ }
+EOF_ALIAS
+fi
+grep -q sethdpconf $HOME/.bash_aliases
+if [ "$?" = "1" ]
+then
+ cat <<EOF_ALIAS >> $HOME/.bash_aliases
+ sethdpconf () {
+  if [ "x\$1" = "x" ]
+  then
+   echo "SetHdpConf: Usage sethdpconf conf_dir"
+   return 1
+  fi
+  d=\`readlink -f \$1\`
+  if [ ! -d \$d ]
+  then
+   echo "SetHdpConf: Can't find conf dir \$d"
+   return 1
+  fi
+  for f in core-site.xml hadoop-env.sh hdfs-site.xml mapred-site.xml masters slaves
+  do
+   if [ ! -r \$d/\$f ]
+   then
+    echo "SetHdpConf: Missing required file \$d/\$f"
+    return 1
+   fi
+  done
+  resethdpenv
+  export HADOOP_CONF_DIR=\$d 
+  echo "Hadoop conf dir setup to \$HADOOP_CONF_DIR"
+ }
+EOF_ALIAS
+fi
+. $HOME/.bash_aliases
+if [ ! -r ~/.ssh/id_dsa ]
+then
+ ssh-keygen -t dsa -P '' -f $HOME/.ssh/id_dsa 
+ cat $HOME/.ssh/id_dsa.pub >> $HOME/.ssh/authorized_keys
+fi
+for d in $CONFDIR $HDBASE/run $HDBASE/log $HDBASE/hdfs
+do
+ if [  -d $d ]
+ then
+  read -p  "$WHO: $d already here, rebuild [Y/n]?" ok
+  if [ "$ok" = "Y" ]
+  then 
+   /bin/rm -rf $d
+  fi
+  mkdir -p $d
+ else
+  mkdir -p $d
+ fi
+done
+cp /etc/hadoop/hadoop-env.sh $CONFDIR/hadoop-env.sh
+sed -i -e 's%/var/log/hadoop/%'$HDBASE'/log/%g' \
+ -e 's%/var/run/%'$HDBASE'/run/%g' -e 's%x128m%x4096m%' $CONFDIR/hadoop-env.sh
+#
+# Build conf files
+#
+cat << EOF_SITE > $CONFDIR/core-site.xml
+<configuration>
+     <property>
+         <name>fs.default.name</name>
+         <value>hdfs://${MASTER}:9000</value>
+     </property>
+</configuration>
+EOF_SITE
+cat << EOF_HDFS > $CONFDIR/hdfs-site.xml
+<configuration>
+     <property>
+         <name>dfs.replication</name>
+         <value>2</value>
+     </property>
+     <property>
+        <name>dfs.name.dir</name>
+        <value>${HDBASE}/hdfs/nm</value>
+     </property>
+     <property>
+        <name>dfs.data.dir</name>
+        <value>${HDBASE}/hdfs/data</value> 
+     </property>
+</configuration>
+EOF_HDFS
+cat << EOF_MAPRED > $CONFDIR/mapred-site.xml
+<configuration>
+     <property>
+         <name>mapred.job.tracker</name>
+         <value>${MASTER}:9001</value>
+     </property>
+     <property>
+        <name>mapred.system.dir</name>
+        <value>${HDBASE}/hdfs/system</value>
+     </property>
+     <property>
+        <name>mapred.local.dir</name>
+        <value>${HDBASE}/hdfs/tmp</value>
+     </property>
+     <property>
+        <name>mapred.tasktracker.map.tasks.maximum</name>
+        <value>2</value>
+     </property>
+     <property>
+        <name>mapred.tasktracker.reduce.tasks.maximum</name>
+        <value>2</value>
+     </property>
+     <property>
+        <name>mapred.child.java.opts</name>
+        <value>-Xmx4096m</value>
+     </property>
+     <property>
+        <name>mapred.reduce.slowstart.completed.maps</name>
+        <value>1.00</value>
+     </property>
+</configuration>
+EOF_MAPRED
+echo "${MASTER}" > $CONFDIR/masters
+#
+# Remove localhost line for a master only conf
+#
+echo "localhost" > $CONFDIR/slaves
+for H in $SLAVE_LISTS
+do
+ # passwordless ssh
+ ssh-copy-id -i $HOME/.ssh/id_dsa.pub $USER@$H
+ echo "$H">> $CONFDIR/slaves
+ # Propagate config 
+ scp -r ${HDBASE}/ $USER@$H:
+ scp $HOME/.bash_aliases $USER@$H:
+done
