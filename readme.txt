@@ -19,7 +19,7 @@ solo sul master
 3) eseguire BuildMultiSetup
    hadoop/BuildMultiSetup
 4) impostare il config di hadoop con quello generato dallo script di flor(dalla home di userhadoop)
-   sethdpconfig hadoopmulti/confmulti/
+   sethdpconf hadoopmulti/confmulti/
 5) formattare namenode e datanode
     hadoop namenode -format
     hadoop datanode -format
